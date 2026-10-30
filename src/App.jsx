@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-const CATS = ['Personal', 'Trabajo', 'Compras', 'Casa']
+const CATS = ['Personal', 'Trabajo', 'Compras', 'Por comprar', 'Casa']
 const KEY = 'pendientes-v2'
 const todayStr = () => { const d = new Date(); return new Date(d - d.getTimezoneOffset() * 6e4).toISOString().slice(0, 10) }
 const fmt = s => new Date(s + 'T00:00:00').toLocaleDateString('es-MX', { day: 'numeric', month: 'short', year: 'numeric' }).replace(/\./g, '')
