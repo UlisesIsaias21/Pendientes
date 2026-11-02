@@ -29,8 +29,10 @@ export default function App() {
   const [editId, setEditId] = useState(null)
   const [editText, setEditText] = useState('')
   const [undo, setUndo] = useState(null)
+  const [warn, setWarn] = useState(false)
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
   const timer = useRef()
+  const warnTimer = useRef()
 
   useEffect(() => localStorage.setItem(KEY, JSON.stringify(items)), [items])
   useEffect(() => {
@@ -42,7 +44,12 @@ export default function App() {
   const add = e => {
     e.preventDefault()
     const t = text.trim()
-    if (!t) return
+    if (!t) {
+      setWarn(true)
+      clearTimeout(warnTimer.current)
+      warnTimer.current = setTimeout(() => setWarn(false), 3000)
+      return
+    }
     setItems([{ id: Date.now(), text: t, done: false, prio, cat, due, created: Date.now() }, ...items])
     setText('')
   }
@@ -111,7 +118,13 @@ export default function App() {
       </section>
 
       <form className="card add" onSubmit={add}>
-        <input value={text} onChange={e => setText(e.target.value)} placeholder="Nuevo pendiente..." maxLength={120} />
+        <input
+          className={warn ? 'shake' : ''}
+          value={text}
+          onChange={e => { setText(e.target.value); setWarn(false) }}
+          placeholder="Nombre del pendiente"
+          maxLength={120}
+        />
         <div className="row">
           <div className="seg">
             <button type="button" className={prio === 'baja' ? 'on' : ''} onClick={() => setPrio('baja')}>Baja</button>
@@ -164,6 +177,8 @@ export default function App() {
       {undo && (
         <div className="toast">Pendiente eliminado <button onClick={restore}>Deshacer</button></div>
       )}
+
+      {warn && <div className="toast warn-toast">¡No seas tonto! No has agregado el nombre del pendiente 🤦</div>}
     </main>
   )
 }
